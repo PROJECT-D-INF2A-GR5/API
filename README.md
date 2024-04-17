@@ -6,5 +6,11 @@
 # Double check the interpreter
 - Make sure the interpreter is set to the python version of your virtual environment. In VSCode the interpreter can be found in the bottom right corner of the window.
 
+# Add environment file
+- Don't forget to manually add the file .env which contains:
+
+OPENAI_KEY="YOUR_API_KEY"
+
+
 # Starting the application
 - To start the application, run the command "python main.py".

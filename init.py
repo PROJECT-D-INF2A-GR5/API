@@ -3,6 +3,7 @@ from flask_restful import Api
 from customer_service import CustomerService
 from dotenv import dotenv_values
 from flask_sqlalchemy import SQLAlchemy
+from database.database_setup import create_tables
 
 app = Flask(__name__)
 
@@ -12,6 +13,11 @@ app.config["SQLALCHEMY_DATABASE_URI"] = dotenv_values(".env")["CONNECTION_STRING
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
+
+# Volgens mij is er een andere manier waarop het moet, maar ik weet niet hoe
+# en dit werkt voor nu
+
+create_tables()
 
 initial_conversation = [
                 {"role": "system", "content": "You are an online customer service."},

@@ -16,4 +16,4 @@ class TestDB(Resource):
     def postgresql(self):
         result = db.session.execute(text('SELECT version()'))
         db_version = result.scalar()
-        return f"Connected to {db_version}"        
+        return f"Connected to {db_version}"

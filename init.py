@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_restful import Api
+from flask_cors import CORS
 from customer_service import CustomerService
 from dotenv import dotenv_values
 from flask_sqlalchemy import SQLAlchemy
@@ -13,6 +14,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = dotenv_values(".env")["CONNECTION_STRING
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
+CORS(app)
 
 # Volgens mij is er een andere manier waarop het moet, maar ik weet niet hoe
 # en dit werkt voor nu

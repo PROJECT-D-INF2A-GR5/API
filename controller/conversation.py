@@ -1,15 +1,15 @@
 from flask_restful import Resource, reqparse
 from init import customer_service, db
 from crud.database_crud import DatabaseCrud
+from database.convert_connection_string import convert_connection_string
 from dotenv import dotenv_values
-import psycopg2
 
 class Conversation(Resource):
 
     def __init__(self):
         self.parser = reqparse.RequestParser()
         self.parser.add_argument("user_id", type=str, required=True)
-        con = "dbname='ProjectD' user='postgres' password='1234' host='localhost' port='5432'"
+        con = convert_connection_string(dotenv_values(".env")["CONNECTION_STRING"])
         self.database_crud = DatabaseCrud(con)
 
     def post(self, user_id):

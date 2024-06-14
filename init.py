@@ -4,7 +4,8 @@ from flask_cors import CORS
 from customer_service import CustomerService
 from dotenv import dotenv_values
 from flask_sqlalchemy import SQLAlchemy
-from database.database_setup import create_tables
+from sqlalchemy import create_engine
+from database.models import Base
 
 app = Flask(__name__)
 
@@ -16,10 +17,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 CORS(app)
 
-# Volgens mij is er een andere manier waarop het moet, maar ik weet niet hoe
-# en dit werkt voor nu
-
-create_tables()
+engine = create_engine(dotenv_values(".env")["CONNECTION_STRING"])
+Base.metadata.create_all(engine)
 
 initial_conversation = [
                 {"role": "system", "content": "You are an online customer service."},

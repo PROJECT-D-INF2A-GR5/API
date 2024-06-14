@@ -1,56 +1,50 @@
 from crud_interface import CrudABC
-import psycopg2
-from psycopg2 import sql
+from database.models import Conversation, Message
+import sqlalchemy
+from sqlalchemy.orm import sessionmaker
 
 class DatabaseCrud(CrudABC):
     def __init__(self, connection_string):
         super().__init__(connection_string)
         # Initialize database connection using connection_string
+        self.engine = sqlalchemy.create_engine(connection_string)
+        self.Session = sessionmaker(bind=self.engine)
 
     def get_conversation(self, user_id):
+        session = self.Session()
         try:
-            # Establish connection to the database
-            connection = psycopg2.connect(self.connection_string)
-            cursor = connection.cursor()
-
             # Query to retrieve the conversation
-            query = sql.SQL("SELECT * FROM conversations WHERE user_id = %s")
-            cursor.execute(query, (user_id,))
+            conversation = session.query(Conversation).filter(Conversation.user_id == user_id).first()
+            if conversation:
+                return self.get_messages(conversation.id)
 
-            # Fetch the result
-            conversation = cursor.fetchone()
-
-            # Close the cursor and connection
-            cursor.close()
-            connection.close()
-
-            return self.get_messages(conversation[0])
-
-        except psycopg2.DatabaseError as e:
+        except Exception as e:
             print(f"Error: {e}")
+        finally:
+            session.close()
+
     
     def get_messages(self, conversation_id):
+        session = self.Session()
         try:
-            # Establish connection to the database
-            connection = psycopg2.connect(self.connection_string)
-            cursor = connection.cursor()
-
-            # Query to retrieve the conversation
-            query = sql.SQL("SELECT * FROM messages WHERE conversation_id = %s")
-            cursor.execute(query, (conversation_id,))
-
-            # Fetch the result
-            messages = cursor.fetchall()
-
-            # Close the cursor and connection
-            cursor.close()
-            connection.close()
-
+            # Query to retrieve the messages
+            messages = session.query(Message).filter(Message.conversation_id == conversation_id).all()
             return messages
 
-        except psycopg2.DatabaseError as e:
+        except Exception as e:
             print(f"Error: {e}")
+        finally:
+            session.close()
 
     def add_message(self, conversation_id, message):
-        # Implementation to add a message to a conversation in the database
-        print(f"Added message to conversation {conversation_id}: {message}")
+        session = self.Session()
+        try:
+            # Add message to the database
+            new_message = Message(conversation_id=conversation_id, role=message["role"], content=message["content"])
+            session.add(new_message)
+            session.commit()
+
+        except Exception as e:
+            print(f"Error: {e}")
+        finally:
+            session.close()

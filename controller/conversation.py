@@ -17,7 +17,7 @@ class Conversation(Resource):
         args = self.parser.parse_args(strict=True)
 
         # todo - Retrieve a list of the past conversation
-        past_conversation = []
+        past_conversation = self.database_crud.get_conversation(user_id)
         message = [{"role":"user", "content":args["user_message"]}]
 
         conversation = customer_service.initial_conversation + past_conversation + message

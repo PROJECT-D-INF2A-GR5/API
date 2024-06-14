@@ -9,5 +9,9 @@ class CrudABC(ABC):
         pass
 
     @abstractmethod
+    def get_messages():
+        pass
+
+    @abstractmethod
     def add_message():
         pass

@@ -12,6 +12,8 @@
 OPENAI_KEY="YOUR_API_KEY"
 CONNECTION_STRING="postgresql+psycopg2://user:password@host:port/dbname[?key=value&key=value...]"
 
+# Adding dependencies to the automated installation process
+- To add new dependencies to the automated process, install the dependencies and write them to requirements.txt afterwards by running the following command: pip freeze requirements.txt
 
 # Starting the application
 - To start the application, run the command "python main.py" or simply "flask run".

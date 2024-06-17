@@ -31,9 +31,6 @@ class DatabaseCrud(CrudABC):
         session = self.Session()
         try:
             # Add message to the database
-            
-            max_id_message = session.query(Message.id).all()
-            max_id_message = max(max_id_message)[0] if max_id_message else 0
 
             new_message = Message(
                                     created_on=datetime.datetime.now(),
@@ -49,20 +46,8 @@ class DatabaseCrud(CrudABC):
             print(f"Error: {e}")
         finally:
             session.close()
-    
-    def get_max_id(self):
-        session = self.Session()
-        try:
-            list_all_id = session.query(User.id).all()
-            max_id = max(list_all_id)[0] if list_all_id else 0
-            return max_id
 
-        except Exception as e:
-            print(f"Error: {e}")
-        finally:
-            session.close()
-
-    def create_user(self, user_id):
+    def create_user(self):
         session = self.Session()
         try:
             # Create a new user
@@ -72,6 +57,7 @@ class DatabaseCrud(CrudABC):
                             deleted_on=None)
             session.add(new_user)
             session.commit()
+            return new_user.id
 
         except Exception as e:
             print(f"Error: {e}")

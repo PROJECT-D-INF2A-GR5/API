@@ -80,14 +80,5 @@ def openai(user_id):
   except Exception as e:
       return jsonify({'error': str(e)}), 400  # Return a 400 status code for bad requests
 
-@app.route('/user/<user>', methods=['POST'])
-def maxId(user):
-    try:
-      print("joe")
-      database_crud.create_user(user)
-      return jsonify({'message': f'User created with user_id {user}'}), 200
-    except Exception as e:
-      return jsonify({'error': str(e)}), 400
-
 engine = create_engine(dotenv_values(".env")["CONNECTION_STRING"])
 Base.metadata.create_all(engine)

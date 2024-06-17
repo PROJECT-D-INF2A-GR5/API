@@ -15,7 +15,7 @@ class User(Base):
 class Message(Base):
     __tablename__ = 'messages'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     created_on = Column(DateTime)
     modified_on = Column(DateTime)
     deleted_on = Column(DateTime)
@@ -26,7 +26,7 @@ class Message(Base):
 class ProductList(Base):
     __tablename__ = 'product_lists'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     created_on = Column(DateTime)
     modified_on = Column(DateTime)
     deleted_on = Column(DateTime)
@@ -37,7 +37,7 @@ class ProductList(Base):
 class Product(Base):
     __tablename__ = 'products'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     created_on = Column(DateTime)
     modified_on = Column(DateTime)
     deleted_on = Column(DateTime)
@@ -48,7 +48,7 @@ class Product(Base):
 class KitchenTop(Base):
     __tablename__ = 'kitchen_tops'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     created_on = Column(DateTime)
     modified_on = Column(DateTime)
     deleted_on = Column(DateTime)

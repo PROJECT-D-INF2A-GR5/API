@@ -74,9 +74,8 @@ def openai(user_id):
         database_crud.add_message(past_conversation, message)
 
         past_messages = database_crud.get_messages(past_conversation)
-        all_messages = past_messages.insert(0, customer_service.initial_conversation)
-        
-        ai_reply = customer_service.get_reply(all_messages)
+        past_messages.insert(0, initial_conversation[0])
+        ai_reply = customer_service.get_reply(past_messages)
         ai_message = {"role":"system", "content":ai_reply}
         database_crud.add_message(past_conversation, ai_message)
 

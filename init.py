@@ -62,26 +62,23 @@ customer_service = CustomerService(dotenv_values(".env")["OPENAI_KEY"], initial_
 
 @app.route('/openai/<user_id>', methods=['POST'])
 def openai(user_id):
-    try:
-        user_message = request.json.get('user_message')
-        if not user_message:
-            raise ValueError('user_message is required')
+  try:
+      user_message = request.json.get('user_message')
+      if not user_message:
+          raise ValueError('user_message is required')
 
-        # Process user_message here
-        past_conversation = database_crud.get_conversation(user_id)
-        message = {"role":"user", "content":user_message}
-
-        database_crud.add_message(past_conversation, message)
-
-        past_messages = database_crud.get_messages(past_conversation)
-        past_messages.insert(0, initial_conversation[0])
-        ai_reply = customer_service.get_reply(past_messages)
-        ai_message = {"role":"system", "content":ai_reply}
-        database_crud.add_message(past_conversation, ai_message)
-
-        return ai_reply
-    except Exception as e:
-        return jsonify({'error': str(e)}), 400  # Return a 400 status code for bad requests
+      # Process user_message here
+      message = {"role":"user", "content":user_message}
+      database_crud.add_message(user_id, message)
+      past_messages = database_crud.get_messages(user_id)
+      past_messages.insert(0, initial_conversation[0])
+      ai_reply = customer_service.get_reply(past_messages)
+      ai_message = {"role":"system", "content":ai_reply}
+      database_crud.add_message(user_id, ai_message)
+      return ai_reply
+      
+  except Exception as e:
+      return jsonify({'error': str(e)}), 400  # Return a 400 status code for bad requests
 
 @app.route('/user/<user>', methods=['POST'])
 def maxId(user):

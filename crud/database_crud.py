@@ -1,5 +1,5 @@
 from crud_interface import CrudABC
-from database.models import Conversation, Message, User
+from database.models import Message, User
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker
 import datetime
@@ -11,39 +11,23 @@ class DatabaseCrud(CrudABC):
         # Initialize database connection using connection_string
         self.engine = sqlalchemy.create_engine(connection_string)
         self.Session = sessionmaker(bind=self.engine)
-
-    def get_conversation(self, user_id):
-        session = self.Session()
-        try:
-            # Query to retrieve the conversation
-            conversation = session.query(Conversation).filter(Conversation.user_id == user_id).first()
-            return conversation.id
-
-        except Exception as e:
-            print(f"Error: {e}")
-        finally:
-            session.close()
-
     
-    def get_messages(self, conversation_id):
+    def get_messages(self, user_id):
         session = self.Session()
         try:
             # Query to retrieve the messages
-            messages = session.query(Message).filter(Message.conversation_id == conversation_id).all()
-
+            messages = session.query(Message).filter(Message.user_id == user_id).all()
             messagelist = []
-
             for message in messages:
                 messagelist.append({"role": message.role, "content": message.content})
             return messagelist
         
-
         except Exception as e:
             print(f"Error: {e}")
         finally:
             session.close()
 
-    def add_message(self, conversation_id, message):
+    def add_message(self, user_id, message):
         session = self.Session()
         try:
             # Add message to the database
@@ -55,7 +39,7 @@ class DatabaseCrud(CrudABC):
                                     created_on=datetime.datetime.now(),
                                     modified_on=datetime.datetime.now(),
                                     deleted_on=None,
-                                    conversation_id=conversation_id,
+                                    user_id=user_id,
                                     role=message["role"],
                                     content=message["content"])
             session.add(new_message)
@@ -87,12 +71,6 @@ class DatabaseCrud(CrudABC):
                             modified_on=datetime.datetime.now(),
                             deleted_on=None)
             session.add(new_user)
-
-            new_conversation = Conversation(created_on=datetime.datetime.now(),
-                                            modified_on=datetime.datetime.now(),
-                                            deleted_on=None,
-                                            user_id=user_id)
-            session.add(new_conversation)
             session.commit()
 
         except Exception as e:

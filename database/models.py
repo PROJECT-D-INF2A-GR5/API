@@ -12,17 +12,6 @@ class User(Base):
     modified_on = Column(DateTime)
     deleted_on = Column(DateTime)
 
-class Conversation(Base):
-    __tablename__ = 'conversations'
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    created_on = Column(DateTime)
-    modified_on = Column(DateTime)
-    deleted_on = Column(DateTime)
-    user_id = Column(Integer, ForeignKey('users.id'))
-    user = relationship('User', backref='conversations')
-    messages = relationship('Message', backref='conversation')
-
 class Message(Base):
     __tablename__ = 'messages'
 
@@ -30,7 +19,7 @@ class Message(Base):
     created_on = Column(DateTime)
     modified_on = Column(DateTime)
     deleted_on = Column(DateTime)
-    conversation_id = Column(Integer, ForeignKey('conversations.id'))
+    user_id = Column(Integer, ForeignKey('users.id'))
     role = Column(String)
     content = Column(String)
 

@@ -5,10 +5,6 @@ class CrudABC(ABC):
         self.connection_string = connection_string
 
     @abstractmethod
-    def get_conversation():
-        pass
-
-    @abstractmethod
     def get_messages():
         pass
 

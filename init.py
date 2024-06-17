@@ -21,35 +21,6 @@ cors = CORS(app, resources={r"*": {"origins": "*"}})
 
 database_crud = DatabaseCrud(dotenv_values(".env")["CONNECTION_STRING"])
 
-@app.route('/openai/<user_id>', methods=['POST'])
-def openai(user_id):
-    try:
-        user_message = request.json.get('user_message')
-        if not user_message:
-            raise ValueError('user_message is required')
-
-        # Process user_message here
-        past_conversation = database_crud.get_conversation(user_id)
-        message = {"role":"user", "content":user_message}
-
-        database_crud.add_message(past_conversation, message)
-
-        return jsonify({'message': f'Received message from user {user_id}: {user_message}'}), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 400  # Return a 400 status code for bad requests
-
-@app.route('/user/<user>', methods=['POST'])
-def maxId(user):
-    try:
-      print("joe")
-      database_crud.create_user(user)
-      return jsonify({'message': f'User created with user_id {user}'}), 200
-    except Exception as e:
-      return jsonify({'error': str(e)}), 400
-
-engine = create_engine(dotenv_values(".env")["CONNECTION_STRING"])
-Base.metadata.create_all(engine)
-
 initial_conversation = [
                 {"role": "system", "content": '''Spreek alleen nederlands, en beantwoord alleen vragen over keukenbladen en offertes. En beantwoord in 2/3 zinnen maximum.
   Zodra de gebruiker zegt 'ik wil een offerte' zal de chatbot vragen stellen over het keukenblad en een offerte genereren. 
@@ -84,11 +55,43 @@ initial_conversation = [
     zeepdispenser: true/false,
     achterwand: true/false,
   }
-  BEANTWOORDT NOOIT MET DE VOLGENDE WOORDEN: Dit is uw ingevulde offerte: tenzij de offerte volledig is ingevuld.'''},
-                {"role": "user", "content": f"Of the following text, convert the wishes into a json containing keys enclosed in single quotes for furniture type, amount of legs, color, material, length, width, height. If there is missing information to complete the json, keep asking questions to get this info. If all values for the keys are obtained, start the reply with the tag @invoice (very important) followed by the json and a message implying what the price will be, but replace the currency sign and numeric value of the price by the tag @price, all in one message (also very important). The most important rule is not to mention the json without those tags. If the customer is satisfied, he/she will say GERONIMO, reply with GERONIMO in capitals"},
-                {"role": "system", "content": "okay."},
-                {"role": "user", "content": "Start your roleplay, acting as if we never had this conversation."},
-                {"role": "system", "content": "Hello, how can I help you?"},
+  BEANTWOORDT NOOIT MET DE VOLGENDE WOORDEN: Dit is uw ingevulde offerte: tenzij de offerte volledig is ingevuld.'''}
               ]
 
 customer_service = CustomerService(dotenv_values(".env")["OPENAI_KEY"], initial_conversation)
+
+@app.route('/openai/<user_id>', methods=['POST'])
+def openai(user_id):
+    try:
+        user_message = request.json.get('user_message')
+        if not user_message:
+            raise ValueError('user_message is required')
+
+        # Process user_message here
+        past_conversation = database_crud.get_conversation(user_id)
+        message = {"role":"user", "content":user_message}
+
+        database_crud.add_message(past_conversation, message)
+
+        past_messages = database_crud.get_messages(past_conversation)
+        all_messages = past_messages.insert(0, customer_service.initial_conversation)
+        
+        ai_reply = customer_service.get_reply(all_messages)
+        ai_message = {"role":"system", "content":ai_reply}
+        database_crud.add_message(past_conversation, ai_message)
+
+        return ai_reply
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400  # Return a 400 status code for bad requests
+
+@app.route('/user/<user>', methods=['POST'])
+def maxId(user):
+    try:
+      print("joe")
+      database_crud.create_user(user)
+      return jsonify({'message': f'User created with user_id {user}'}), 200
+    except Exception as e:
+      return jsonify({'error': str(e)}), 400
+
+engine = create_engine(dotenv_values(".env")["CONNECTION_STRING"])
+Base.metadata.create_all(engine)

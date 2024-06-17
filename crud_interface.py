@@ -11,7 +11,3 @@ class CrudABC(ABC):
     @abstractmethod
     def add_message():
         pass
-
-    @abstractmethod
-    def get_max_id():
-        pass

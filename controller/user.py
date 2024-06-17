@@ -1,7 +1,6 @@
 from flask_restful import Resource, reqparse
 from crud.database_crud import DatabaseCrud
 from dotenv import dotenv_values
-import traceback
 
 class User(Resource):
 
@@ -18,6 +17,5 @@ class User(Resource):
         try:
             return self.database_crud.create_user(), 200
         except Exception as e:
-            print(traceback.format_exc())
             return {'error': str(e)}, 400
         

@@ -3,7 +3,7 @@ from database.models import Message, User
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker
 import datetime
-import math
+import traceback
 
 class DatabaseCrud(CrudABC):
     def __init__(self, connection_string):
@@ -32,10 +32,10 @@ class DatabaseCrud(CrudABC):
         try:
             # Add message to the database
             
-            max_id = session.query(Message.id).all()
-            max_id = max(max_id)[0] if max_id else 0
+            max_id_message = session.query(Message.id).all()
+            max_id_message = max(max_id_message)[0] if max_id_message else 0
 
-            new_message = Message(id=max_id+1,
+            new_message = Message(
                                     created_on=datetime.datetime.now(),
                                     modified_on=datetime.datetime.now(),
                                     deleted_on=None,
@@ -53,8 +53,8 @@ class DatabaseCrud(CrudABC):
     def get_max_id(self):
         session = self.Session()
         try:
-            max_id = session.query(User.id).all()
-            max_id = max(max_id)[0] if max_id else 0
+            list_all_id = session.query(User.id).all()
+            max_id = max(list_all_id)[0] if list_all_id else 0
             return max_id
 
         except Exception as e:
@@ -66,8 +66,7 @@ class DatabaseCrud(CrudABC):
         session = self.Session()
         try:
             # Create a new user
-
-            new_user = User(id=user_id,
+            new_user = User(
                             created_on=datetime.datetime.now(),
                             modified_on=datetime.datetime.now(),
                             deleted_on=None)

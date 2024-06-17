@@ -1,1 +1,1 @@
-__all__ = ["conversation", "test_db"]
+__all__ = ["conversation", "test_db", "user"]

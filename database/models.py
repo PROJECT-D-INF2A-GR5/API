@@ -7,7 +7,7 @@ Base = declarative_base()
 class User(Base):
     __tablename__ = 'users'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     created_on = Column(DateTime)
     modified_on = Column(DateTime)
     deleted_on = Column(DateTime)
